@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+        <style type="text/css">
+        div.bar {
+                display: inline-block;
+                width: 20px;
+                height: 75px;
+                background-color: teal;
+                margin-right: 2px;
+            }
+
+        div.tooltip {   
+          position: absolute;           
+          text-align: center;           
+          width: 60px;                  
+          height: 28px;                 
+          padding: 2px;             
+          font: 12px sans-serif;        
+          background: white;   
+          border: 0px;      
+          border-radius: 8px;           
+          pointer-events: none;         
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            var dataset = [25, 7, 5, 26, 11, 8, 25, 14, 23, 19,
+                14, 11, 22, 29, 11];
+
+            var div = d3.select("body").append("div")   
+                            .attr("class", "tooltip")               
+                            .style("opacity", 0); 
+
+            var w = 1000;
+            var h = 500;
+            var barPadding = 1;
+            
+            var margin = {top: 20, right: 5, bottom: 40, left: 40},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+        
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", w + margin.left + margin.right)
+                        .attr("height", h + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+             var xscale = d3.scaleLinear()
+                   .domain([0, dataset.length])
+                   .range([0, w]);
+
+            var yscale = d3.scaleLinear()
+                   .domain([0, d3.max(dataset)])
+                   .range([h, 0]);
+
+            var x_axis = d3.axisBottom()
+                   .scale(xscale)
+                   .ticks((dataset.length-1))
+                   .tickFormat(function(d, i){
+                        return "Sample " + (i+1)
+                    });
+
+            var y_axis = d3.axisLeft()
+                   .scale(yscale)
+                   .ticks(5);
+
+            var yAppend = svg.append("g")
+                           .attr("transform", "translate(0,0)")
+                           .call(y_axis);
+
+            var xAppend = svg.append("g")
+                            .attr("class", "xaxis")
+                            .attr("transform", "translate(0," + h + ")")
+                            .call(x_axis)
+
+            var labelMove = svg.selectAll(".xaxis text")
+                .attr("transform", function(d) {
+                    return "translate(" + this.getBBox().height + "," + this.getBBox().height + ")rotate(-45)";
+         });
+
+            var graph = svg.selectAll("rect")
+                           .data(dataset)
+                           .enter()
+                           .append("rect")
+                           .attr("x", function(d, i) {
+                                return i * (w / dataset.length);
+                           })
+                           .attr("y", function(d) {
+                                return h - (d * 15) - margin.top - margin.bottom;
+                           })
+                           .attr("width", w / dataset.length - barPadding)
+                           .attr("height", function(d) {
+                                return d * 15 + margin.top + margin.bottom;
+                           })
+                           .attr("fill", function(d, i) {
+                            if (i % 2 == 0){return "red";}
+                            else {return "blue";}
+                           });
+
+            svg.append("g")
+                .call(y_axis);
+
+
+            var addTooltip = function(d) {
+                    div.transition()        
+                        .duration(200)      
+                        .style("opacity", .9);            
+                    div .text(d)  
+                        .style("left", (d3.event.pageX) + "px")     
+                        .style("top", (d3.event.pageY - 28) + "px");    
+                        }
+                    graph.on("mouseover", addTooltip)
+                    graph.on("mouseout", function(d) {       
+                            div.transition()        
+                            .duration(500)      
+                            .style("opacity", 0);   
+                });
+
+
+
+               
+  
+        </script>
+        
+    </body>
+</html>     

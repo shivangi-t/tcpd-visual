@@ -1,0 +1,96 @@
+<head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+        <style type="text/css">
+        div.bar {
+                display: inline-block;
+                width: 20px;
+                height: 75px;
+                background-color: teal;
+                margin-right: 2px;
+            }
+
+        div.tooltip {   
+          position: absolute;           
+          text-align: center;           
+          width: 60px;                  
+          height: 28px;                 
+          padding: 2px;             
+          font: 12px sans-serif;        
+          background: white;   
+          border: 0px;      
+          border-radius: 8px;           
+          pointer-events: none;         
+}
+        </style>
+</head>
+<body>
+        <script type="text/javascript">
+
+            var dataset = [[1, 1, 2], [2, 2, 4], [4, 4, 8], [8, 8, 16]];
+
+            var colours = ["red", "blue", "green"]
+
+            var parties = []
+
+            var dataset2 = [2, 7, 5, 6, 11, 8, 5, 14, 3, 19,
+                14, 11, 2, 29, 11]
+
+            var div = d3.select("body").append("div")   
+                            .attr("class", "tooltip")               
+                            .style("opacity", 0); 
+
+            var w = 1000;
+            var h = 500;
+            var barPadding = 1;
+            
+            var margin = {top: 20, right: 5, bottom: 40, left: 40},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+        
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", w + margin.left + margin.right)
+                        .attr("height", h + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var n = dataset[0].length;
+
+            for (i=0; i<n; i++) {
+            	svg.selectAll("k")
+                           .data(dataset)
+                           .enter()
+                           .append("rect")
+                           .attr("x", function(d, i) {
+                                return i * (w / dataset.length);
+                           })
+                           .attr("y", function(d) {
+                           	   // console.log(d[0] + " " + d[1]);
+                           	    var sum = 0;
+                           	    for (j=0; j<=i; j++) {sum = sum + d[j]};
+                           	    //	console.log(sum);
+                                return h - sum*7 - (margin.top + margin.bottom)
+                                ;
+
+                           })
+                           .attr("width", w / dataset.length - barPadding)
+                           .attr("height", function(d) {
+                           		console.log(d[i] * 7);
+                                return (d[i] * 7);
+                           })
+                           .attr("fill", colours[i]);
+            }
+
+
+
+
+
+
+               
+  
+        </script>
+        
+    </body>
+ 
