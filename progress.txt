@@ -1,0 +1,5 @@
+23rd - 27th October
+
+I spent most of the week trying to figure out how to extract data from the JSON. I was able to get data for one assembly in the correct format, which I used to generate a visualisation. However, I'm still working on rewriting the loop to account for varying array sizes for each party. This should be done by Sunday.
+
+Next week, I will work on displaying graphs for each assembly on the same page, and then create visualisations for all states whose data I have. I might also be able to incorporate the Old_Success attribute.
