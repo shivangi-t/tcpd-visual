@@ -41,6 +41,25 @@
             var dataset2 = [2, 7, 5, 6, 11, 8, 5, 14, 3, 19,
                 14, 11, 2, 29, 11]
 
+            var partyColours = {'BJS': 'orange', 'INC': 'blue', 'IND': 'green', 'PSP': 'yellow', 'RPI': 'red', 'SSP': 'black', 'SWA': 'cyan'};
+
+            var firstAssembly = mydata.filter(function(i) {
+              return i.Year === 1;
+            });
+
+            var lookup = {};
+            var items = firstAssembly;
+            var parties = [];
+
+            for (var item, i = 0; item = items[i++];) {
+              var Party = item.Party;
+
+              if (!(Party in lookup)) {
+                lookup[Party] = 1;
+                parties.push(Party);
+              }
+            }
+
             var div = d3.select("body").append("div")   
                             .attr("class", "tooltip")               
                             .style("opacity", 0); 
