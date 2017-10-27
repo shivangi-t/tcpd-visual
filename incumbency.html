@@ -36,15 +36,13 @@
 
             var colours = ["red", "blue", "green"]
 
-            var parties = []
-
             var dataset2 = [2, 7, 5, 6, 11, 8, 5, 14, 3, 19,
                 14, 11, 2, 29, 11]
 
             var partyColours = {'BJS': 'orange', 'INC': 'blue', 'IND': 'green', 'PSP': 'yellow', 'RPI': 'red', 'SSP': 'black', 'SWA': 'cyan'};
 
             var firstAssembly = mydata.filter(function(i) {
-              return i.Year === 1;
+              return i.Year === 1967;
             });
 
             var lookup = {};
@@ -58,6 +56,16 @@
                 lookup[Party] = 1;
                 parties.push(Party);
               }
+            }
+
+            var partywise = []
+            for (i = 0; i < parties.length; i++) {
+              var currentParty = parties[i];
+              var currentEntries = firstAssembly.filter(function(i) {
+              return i.Party === currentParty;
+            });
+              partywise.push(currentEntries);
+
             }
 
             var div = d3.select("body").append("div")   
