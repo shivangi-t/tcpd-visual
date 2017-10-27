@@ -89,27 +89,30 @@
 
             var n = dataset[0].length;
 
-            for (i=0; i<n; i++) {
+            for (i=0; i<2; i++) {
             	svg.selectAll("k")
-                           .data(dataset)
+                           .data(partywise)
                            .enter()
                            .append("rect")
                            .attr("x", function(d, i) {
-                                return i * (w / dataset.length);
+                                return i * (w / partywise.length);
                            })
                            .attr("y", function(d) {
                            	    var sum = 0;
-                           	    for (j=0; j<=i; j++) {sum = sum + d[j]};
-                                return h - sum*7 - (margin.top + margin.bottom)
+                           	    for (j=0; j<=i; j++) {sum = sum + d[j].Total_placed};
+                                return h - sum*4 - (margin.top + margin.bottom)
                                 ;
 
                            })
                            .attr("width", w / dataset.length - barPadding)
                            .attr("height", function(d) {
-                           		console.log(d[i] * 7);
-                                return (d[i] * 7);
+                           		console.log(d[i].Total_placed * 4);
+                                return (d[i].Total_placed * 4);
                            })
-                           .attr("fill", colours[i]);
+                           .attr("fill", function(d) {
+                            return partyColours[d[i].Party];
+                           });
+                            
             }
 
 
