@@ -87,33 +87,48 @@
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            var n = dataset[0].length;
-
             for (m = 0; m < partywise.length; m++) {
-              for (i = 0; i < partywise[m].length; i++) {
                 svg.selectAll("k")
                            .data(partywise)
                            .enter()
                            .append("rect")
                            .attr("x", function(d, i) {
                                 console.log(d);
-                                return m * (w / partywise.length);
+                                return i * (w / partywise.length);
                            })
-                           .attr("y", function(d) {
-                                var sum = 0;
-                                for (j=0; j<=i; j++) {sum = sum + d[j].Total_placed};
+                           .attr("y", function(d, i) {
+                            if(typeof d[m] === 'undefined') {
+                                  return 0;
+                              }
+                              else {
+                                  var sum = 0;
+                                for (j=0; j<=m; j++) {
+                                  if (typeof d[j] === 'undefined'){
+                                    break;}
+                                    else {
+                                      sum = sum + d[j].Total_placed}
+                                  };
                                 return h - sum*2 - (margin.top + margin.bottom)
                                 ;
-
+                              }
                            })
                            .attr("width", w / partywise.length - barPadding)
-                           .attr("height", function(d) {
-                                return (d[i].Total_placed * 2);
+                           .attr("height", function(d, i) {
+                            if (typeof d[m] === 'undefined') {
+                              return 0;
+                            }
+                            else {
+                              return (d[m].Total_placed * 2);
+                            }
                            })
-                           .attr("fill", function(d) {
-                            return partyColours[d[i].Party];
+                           .attr("fill", function(d, i) {
+                            if (typeof d[m] === 'undefined') {
+                              return 0;
+                            }
+                            else {
+                            return partyColours[d[m].Party];
+                          }
                            });
-              }
             }
 
   
