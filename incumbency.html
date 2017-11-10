@@ -1,6 +1,6 @@
 <head>
         <meta charset="utf-8">
-        <title>D3 Test</title>
+        <title>Incumbency</title>
         <script type="text/javascript" src="d3/d3.v3.js"></script>
         <style type="text/css">
         div.bar {
@@ -87,47 +87,46 @@
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            for (m = 0; m < partywise.length; m++) {
-                svg.selectAll("k")
+            for (k=0; k<5; k++) {
+              svg.selectAll("u")
                            .data(partywise)
                            .enter()
                            .append("rect")
                            .attr("x", function(d, i) {
-                                console.log(d);
                                 return i * (w / partywise.length);
                            })
                            .attr("y", function(d, i) {
-                            if(typeof d[m] === 'undefined') {
-                                  return 0;
-                              }
-                              else {
-                                  var sum = 0;
-                                for (j=0; j<=m; j++) {
-                                  if (typeof d[j] === 'undefined'){
-                                    break;}
-                                    else {
-                                      sum = sum + d[j].Total_placed}
+                            if (typeof(d[k]) === 'undefined') {
+                              return 0;
+                            }
+                            else {
+                               // console.log(d[0] + " " + d[1]);
+                                var sum = 0;
+                                for (j=0; j<=k; j++) {
+                                  if (typeof(d[j]) !== 'undefined') {
+                                    sum = sum + d[j].Num_Cand
+                                  }
                                   };
                                 return h - sum*2 - (margin.top + margin.bottom)
-                                ;
-                              }
+                                ;}
+
                            })
                            .attr("width", w / partywise.length - barPadding)
                            .attr("height", function(d, i) {
-                            if (typeof d[m] === 'undefined') {
+                            if (typeof(d[k]) === 'undefined') {
                               return 0;
                             }
                             else {
-                              return (d[m].Total_placed * 2);
-                            }
+                                return (d[k].Num_Cand*2);}
                            })
                            .attr("fill", function(d, i) {
-                            if (typeof d[m] === 'undefined') {
+                            if (typeof(d[k]) === 'undefined') {
                               return 0;
                             }
                             else {
-                            return partyColours[d[m].Party];
-                          }
+                              console.log(d[k]);
+                              return partyColours[d[k].Last_party];
+                            }
                            });
             }
 
