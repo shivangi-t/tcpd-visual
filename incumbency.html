@@ -1,7 +1,7 @@
 <head>
         <meta charset="utf-8">
         <title>Incumbency</title>
-        <script type="text/javascript" src="d3/d3.v3.js"></script>
+        <script type="text/javascript" src="d3/d3.v4.js"></script>
         <style type="text/css">
         div.bar {
                 display: inline-block;
@@ -86,6 +86,27 @@
                         .attr("height", h + margin.top + margin.bottom)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var xscale = d3.scaleLinear()
+                   .domain([0, partywise.length])
+                   .range([0, w]);
+
+            var x_axis = d3.axisBottom()
+                   .scale(xscale)
+                   .ticks((partywise.length-1))
+                   .tickFormat(function(d, i){
+                        return parties[i];
+                    });
+
+            var xAppend = svg.append("g")
+                            .attr("class", "xaxis")
+                            .attr("transform", "translate(0," + h + ")")
+                            .call(x_axis)
+
+            var labelMove = svg.selectAll(".xaxis text")
+                .attr("transform", function(d) {
+                    return "translate(" + this.getBBox().height + "," + this.getBBox().height + ")rotate(-45)";
+         });
 
             for (k=0; k<5; k++) {
               svg.selectAll("u")
