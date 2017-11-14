@@ -58,12 +58,12 @@
               .domain(['BJS', 'INC', 'IND', 'PSP', 'RPI', 'SSP', 'SWA', 'JS', 'None'])
               .range(['rgb(255,165,0)', 'rgb(30,144,255)', 'rgb(0,128,0)', 'rgb(255,255,0)', 'rgb(255,0,0)', 'rgb(0,0,0)', 'rgb(139,69,19)', 'rgb(218,112,214)', 'rgb(112,128,144)']);
 
-            var secondAssembly = mydata.filter(function(i) {
-              return i.Year === 1967;
+            var thirdAssembly = mydata.filter(function(i) {
+              return i.Assembly_No === 3;
             });
 
             var lookup = {};
-            var items = secondAssembly;
+            var items = thirdAssembly;
             var parties = [];
 
             for (var item, i = 0; item = items[i++];) {
@@ -78,7 +78,7 @@
             var partywise = []
             for (i = 0; i < parties.length; i++) {
               var currentParty = parties[i];
-              var currentEntries = secondAssembly.filter(function(i) {
+              var currentEntries = thirdAssembly.filter(function(i) {
               return i.Party === currentParty;
             });
               partywise.push(currentEntries);
@@ -110,6 +110,8 @@
                 yMax = partywise[i][0].Total_placed;
               }
             }
+
+            var hFactor = parseInt(h/yMax);
 
             console.log(yMax);
 
@@ -143,7 +145,7 @@
 
             var labelMove = svg.selectAll(".xaxis text")
                 .attr("transform", function(d) {
-                    return "translate(" + this.getBBox().width*3.5 + "," + this.getBBox().height + ")rotate(0)";
+                    return "translate(" + this.getBBox().width*2.5 + "," + this.getBBox().height + ")rotate(0)";
          });
 
             for (k=0; k<8; k++) {
@@ -165,7 +167,7 @@
                                     sum = sum + d[j].Num_Cand
                                   }
                                   };
-                                return h - sum*2 - (margin.top + margin.bottom)
+                                return h - sum*hFactor - (margin.top + margin.bottom)
                                 ;}
 
                            })
@@ -175,7 +177,7 @@
                               return 0;
                             }
                             else {
-                                return (d[k].Num_Cand*2);}
+                                return (d[k].Num_Cand*hFactor);}
                            })
                            .attr("fill", function(d, i) {
                             if (typeof(d[k]) === 'undefined') {
@@ -196,7 +198,7 @@
                                 div.transition()    
                                     .duration(200)    
                                     .style("opacity", .9); 
-                                div .html(this.getBBox().height/2 + "<br/>")  
+                                div .html(this.getBBox().height/hFactor + "<br/>")  
                                     .style("left", (d3.event.pageX) + "px")   
                                     .style("top", (d3.event.pageY - 28) + "px");  
                                 })          
@@ -213,9 +215,6 @@
               .attr("transform", "translate(20,20)");
 
             var legendOrdinal = d3.legendColor()
-              //d3 symbol creates a path-string, for example
-              //"M0,-8.059274488676564L9.306048591020996,
-              //8.059274488676564 -9.306048591020996,8.059274488676564Z"
               .shape("path", d3.symbol().type(d3.symbolCircle).size(150)())
               .shapePadding(10)
               //use cellFilter to hide the "e" cell
