@@ -98,6 +98,10 @@
                    .domain([0, partywise.length])
                    .range([0, w]);
 
+            var yscale = d3.scaleLinear()
+                   .domain([0, 400])
+                   .range([h-60, 0]);
+
             var x_axis = d3.axisBottom()
                    .scale(xscale)
                    .ticks((partywise.length-1))
@@ -105,10 +109,18 @@
                         return parties[i];
                     });
 
+            var y_axis = d3.axisLeft()
+                   .scale(yscale)
+                   .ticks(5);
+
             var xAppend = svg.append("g")
                             .attr("class", "xaxis")
-                            .attr("transform", "translate(0," + h + ")")
+                            .attr("transform", "translate(0," + (h-60) + ")")
                             .call(x_axis)
+
+            var yAppend = svg.append("g")
+                           .attr("transform", "translate(0,0)")
+                           .call(y_axis);
 
             var labelMove = svg.selectAll(".xaxis text")
                 .attr("transform", function(d) {
