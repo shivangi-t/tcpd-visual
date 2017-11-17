@@ -46,6 +46,10 @@
 
         </style>
 </head>
+
+<div id = "graph1"></div>
+<div id = "graph2"></div>
+
 <body>
         <script type="text/javascript">
 
@@ -80,6 +84,7 @@
 
             var assemblyNo = 4;
 
+            var generateGraph = function(mydata, assemblyNo, divID) {
             //get current assembly parties
             var currentAssembly = mydata.filter(function(i) {
               return i.Assembly_No === assemblyNo;
@@ -148,7 +153,7 @@
                 height = 500 - margin.top - margin.bottom;
         
             //create svg
-            var svg = d3.select("body")
+            var svg = d3.select("#" + divID)
                         .append("svg")
                         .attr("width", w + margin.left + margin.right)
                         .attr("height", h + margin.top + margin.bottom)
@@ -280,7 +285,10 @@
             svg.select(".legendOrdinal")
                 .call(legendOrdinal);
                             
+              }
 
+              generateGraph(mydata, 4, "graph1");
+              generateGraph(mydata, 3, "graph2");
   
         </script>
         
