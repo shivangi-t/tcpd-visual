@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <script data-require="d3@4.0.0" data-semver="4.0.0" src="https://d3js.org/d3.v4.min.js"></script>
+  </head>
+
+  <body>
+    
+    <script>
+    
+    // number of rects
+    var squareNum = 408;
+
+    var rowMax = 20;
+
+    if (squareNum > rowMax) {
+          var rows = Math.floor(squareNum/rowMax);
+          var data = Array(rows).fill(rowMax);
+          var rem = squareNum % rowMax;
+          data.push(rem);
+        }
+         
+    var squareDim = 10, // pixel dimensions of square
+        width = rowMax * 12;
+        height = (Math.floor(squareNum/rowMax) + 1) * 12;
+        
+    var svg = d3.select('body')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height); // create my svg node
+   
+   var row = -1; 
+    svg.selectAll('rectGroup')
+      .data(data)
+      .enter()
+      .append('g') // for each data point create a group
+      .selectAll('rect')
+      .data(function(d, i){
+        return d3.range(d);
+         // this creates an array of [1, 2, 3 ... N] where N is a datum in your rect data
+      }) // this is a sub selection, it allows you to define a sub dataset
+      .enter()
+      .append('rect')
+      .attr('width', squareDim)
+      .attr('height', squareDim)
+      .attr('x', function(d,i,j){
+        return d * (squareDim + 2);
+      }) // determine the x position
+      .attr('y', function(d, i, j){
+        console.log(i);
+        if (i == 0) {
+          row += 1;
+        }
+        return row * (squareDim + 2);   // and y
+      })
+      .style('fill', '#c62828');
+      
+    </script>
+    
+  </body>
+
+</html>

@@ -8,10 +8,9 @@
         <script src="js/skel.min.js"></script>
         <script src="js/skel-layers.min.js"></script>
         <script src="js/init.js"></script>
+
         <noscript>
-          <link rel="stylesheet" href="css/skel.css" />
-          <link rel="stylesheet" href="css/style.css" />
-          <link rel="stylesheet" href="css/style-xlarge.css" />
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         </noscript>
         <style type="text/css">
         div.bar {
@@ -63,17 +62,10 @@
 </head>
 
 <div id = "graph1"></div>
-<div id = "graph2"></div>
-<div id = "graph3"></div>
-<div id = "graph4"></div>
-<div id = "graph5"></div>
-<div id = "graph6"></div>
-<div id = "graph7"></div>
-<div id = "graph8"></div>
-<div id = "graph9"></div>
-<div id = "graph10"></div>
-<div id = "graph11"></div>
 
+      <input id="rangeInput" type="range" min="2" max="11" step="1" value="10">
+
+      <input type="text" id="textInput" value="">
 
 <body>
         <script type="text/javascript">
@@ -388,38 +380,105 @@
                             
               }
 
-              function updateSlider(slideAmount) {
-              var sliderDiv = document.getElementById("sliderAmount");
-              sliderDiv.innerHTML = slideAmount;
-              }
+           function updateSlider() {
+        	textInput.value = this.value;
+        	generateGraph(mydata, this.value, "graph1");
+    		}
 
-              document.getElementById('graph1').innerHTML = "<h2>Second Assembly, 1967</h2>"
-              generateGraph(mydata, 2, "graph1");
-              document.getElementById('graph2').innerHTML = "<h2>Third Assembly, 1972</h2>"
-              generateGraph(mydata, 3, "graph2");
-              document.getElementById('graph3').innerHTML = "<h2>Fourth Assembly, 1975</h2>"
-              generateGraph(mydata, 4, "graph3");
-              document.getElementById('graph4').innerHTML = "<h2>Fifth Assembly, 1980</h2>"
-              generateGraph(mydata, 5, "graph4");
-              document.getElementById('graph5').innerHTML = "<h2>Sixth Assembly, 1985</h2>"
-              generateGraph(mydata, 6, "graph5");
-              document.getElementById('graph6').innerHTML = "<h2>Seventh Assembly, 1990</h2>"
-              generateGraph(mydata, 7, "graph6");
-              document.getElementById('graph7').innerHTML = "<h2>Eighth Assembly, 1995</h2>"
-              generateGraph(mydata, 8, "graph7");
-              document.getElementById('graph8').innerHTML = "<h2>Ninth Assembly, 1998</h2>"
-              generateGraph(mydata, 9, "graph8");
-              document.getElementById('graph9').innerHTML = "<h2>Tenth Assembly, 2002</h2>"
-              generateGraph(mydata, 10, "graph9");
-              document.getElementById('graph10').innerHTML = "<h2>Eleventh Assembly, 2007</h2>"
-              generateGraph(mydata, 11, "graph10");
-              document.getElementById('graph11').innerHTML = "<h2>Twelfth Assembly, 2012</h2>"
-              generateGraph(mydata, sliderAmount, "graph11");
+    		rangeInput.addEventListener('change', updateSlider);
+
+			updateSlider.call(rangeInput);
+
+
+            document.getElementById('graph1').innerHTML = "<h2>Second Assembly, 1967</h2>"
+            ;
+              
   
         </script>
 
-      <input id="slide" type="range" min="2" max="11" step="1" value="10" onchange="updateSlider(this.value)">
-      <div id="sliderAmount"></div>​
+        <div class="container">
+
+<header>
+<div class="well">
+<h1> json2d3  </h1>
+<p> Popular number distribution made with D3 Javascript Library. </p>
+</div>
+</header>
+
+<div class="row">
+
+<div class="col col-lg-8">
+<svg id="theSvg"></svg>
+</div>
+
+<div class="col col-lg-4">
+<div class="panel panel-default " id="rightBox">
+  <div class="panel-heading">Select a number</div>
+   
+  <div class="panel-body" id="success" style="opacity:0;display:none;"> 
+  
+  </div>
+
+  <div class="panel-body" id="theform"> 
+<form name="theform" class="form-horizontal" method="post" >
+<fieldset>
+<div class="form-group">
+  <label class="col-md-4 control-label" for="radios"> </label>
+  <div class="col-md-4"> 
+    <label class="radio-inline" for="number-0">
+       <input type="radio" name="number" id="number-0" value="1" >
+       1
+    </label> 
+    <label class="radio-inline" for="number-1">
+      <input type="radio" name="number" id="number-1" value="2">
+      2
+    </label> 
+    <label class="radio-inline" for="number-2">
+      <input type="radio" name="number" id="number-2" value="3">
+      3
+    </label> 
+    <label class="radio-inline" for="number-3">
+      <input type="radio" name="number" id="number-3" value="4">
+      4
+    </label> 
+    <label class="radio-inline" for="number-4">
+      <input type="radio" name="number" id="number-4" value="5">
+      5
+    </label> 
+    <label class="radio-inline" for="number-5">
+      <input type="radio" name="number" id="number-5" value="6">
+      6
+    </label> 
+    <label class="radio-inline" for="number-6">
+      <input type="radio" name="number" id="number-6" value="7">
+      7
+    </label> 
+    <label class="radio-inline" for="number-7">
+      <input type="radio" name="number" id="number-7" value="8">
+      8
+    </label> 
+    <label class="radio-inline" for="number-8">
+      <input type="radio" name="number" id="number-8" value="9">
+      9
+    </label> 
+    <label class="radio-inline" for="number-9">
+      <input type="radio" name="number" id="number-9" value="0">
+      0
+    </label>
+  </div>
+</div>
+
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="submit"></label>
+  <div class="col-md-4">
+    <button id="submit" name="submit" type="button" class="btn btn-primary">Submit</button>
+  </div>
+</div>
+
+</fieldset>
+</form>
+  </div>
         
     </body>
  
