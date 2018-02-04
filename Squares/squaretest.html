@@ -73,7 +73,7 @@ var jsonData = '[{"Year":1978,"Party":"IND","Last_party":"IND","old_success":fal
 
             var partyNames = {'INC': 'Indian National Congress', 'MNF': 'Mizo National Front', 'MDF': 'Maraland Democratic Front', 'ZNP': 'Zoram Nationalist Party', 'MZPC': 'Mizoram People\'s Conference', 'IND': 'Independent', 'PSP': 'Praja Socialist Party', 'NJP': 'New Justice Party', 'BJS': 'Bharatiya Jan Sangh', 'NCO': 'National Congress Organisation', 'CPI': 'Communist Party of India', 'KLP': 'Krishikar Lok Party', 'BLD': 'Bharatiya Lok Dal', 'SP': 'Samajwadi Party', 'RMP': 'Revolutionary Marxist Party', 'INC(I)': 'Indian National Congress (I)', 'JNP(JP)': 'Janata Party', 'BJP': 'Bharatiya Janata Party', 'JNP(SC)': 'Janata Party (SC)', 'JNP': 'Janata Party', 'JD': 'Janata Dal', 'YVP': 'Yuva Vikas Party', 'AIRJP': 'All India Rashtriya Janata Party', 'JD(U)': 'Janata Dal United', 'NCP': 'National Communist Party', 'BJNKP': 'Bharatiya Jankranti Party', 'GPP': 'Gujarat Parivartan Party', 'None': 'None', 'Other': 'Other', 'PPC': 'People\'s Conference', 'MPC': 'Mizoram People\'s Conference'}
 
-    var rowMax = 30;
+    var rowMax = 20;
 
     var assemblyNo = 3;
 
@@ -140,21 +140,22 @@ var jsonData = '[{"Year":1978,"Party":"IND","Last_party":"IND","old_success":fal
           data.push(rem);
         }
          
-    var squareDim = 10, // pixel dimensions of square
-        width = rowMax * 12;
-        height = (Math.floor(squareNum/rowMax) + 1) * 12;
+    var squareDim = 15, // pixel dimensions of square
+        width = rowMax * 17;
+        height = (Math.floor(squareNum/rowMax) + 1) * 17;
         
     var svg = d3.select('body')
       .append('svg')
       .attr('width', width)
-      .attr('height', height); // create my svg node
+      .attr('height', height);
 
      var row = -1;
+     var count = 0;
      var lastParty = []
       svg.selectAll('rectGroup')
         .data(partywise)
         .enter()
-        .append('g') // for each data point create a group
+        .append('g')
         .selectAll('rect')
         .data(function(d, i){
           if (d[0].Total_placed > rowMax) {
@@ -166,22 +167,25 @@ var jsonData = '[{"Year":1978,"Party":"IND","Last_party":"IND","old_success":fal
           for (i = 0; i < d.length; i++) {
             lastParty.push(d[i].Last_party);
           }
-          console.log(lastParty);
-          return d3.range(data[row+1]);
-           // this creates an array of [1, 2, 3 ... N] where N is a datum in your rect data
-        }) // this is a sub selection, it allows you to define a sub dataset
+          count += 1;
+          return d3.range(data[count]);
+        })
         .enter()
         .append('rect')
         .attr('width', squareDim)
         .attr('height', squareDim)
         .attr('x', function(d,i,j){
           return d * (squareDim + 2);
-        }) // determine the x position
+        })
         .attr('y', function(d, i, j){
           if (i == 0) {
             row += 1;
           }
-          return row * (squareDim + 2);   // and y
+          if (i == rowMax-1) {
+            count += 1;
+          }
+
+          return row * (squareDim + 2);
         })
         .style("fill", function(d, i) {
                               return partyColours[lastParty[i]];
