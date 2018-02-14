@@ -1,7 +1,7 @@
 <head>
         <meta charset="utf-8">
         <title>D3 Test</title>
-        <script type="text/javascript" src="d3/d3.v3.js"></script>
+         <script data-require="d3@4.0.0" data-semver="4.0.0" src="https://d3js.org/d3.v4.min.js"></script>
         <style type="text/css">
         div.bar {
                 display: inline-block;
@@ -60,9 +60,17 @@
 
             for (k=0; k<n; k++) {
             	svg.selectAll("u")
-                           .data(dataset)
+                           .data(dataset2)
                            .enter()
-                           .append("rect")
+                          .append('path')
+                          .attr('d', d3.symbol().type(function(d) {
+                            if (d > 6 == 'Yes') {
+                              return d3.symbolSquare;
+                            }
+                            else {
+                              return d3.symbolCircle;
+                            }
+                          }))
                            .attr("x", function(d, i) {
                                 return i * (w / dataset.length);
                            })

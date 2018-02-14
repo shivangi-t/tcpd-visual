@@ -167,12 +167,13 @@
     	}
     }
 
+    var symbolSize = 200
     var rowMax = 5
     var squareDim = 12, // pixel dimensions of square
         // width = xMax * 17; // horizontal
         // height = partywise.length * (squareDim + 2); // horizontal
-        width = (rowMax + 1) * partywise.length * (squareDim + 2); // vertical
-        height = xMax * (squareDim + 2); //vertical
+        width = (rowMax + 1) * partywise.length * (squareDim + 10); // horizontal
+        height = xMax * (symbolSize/100); //vertical
         
     var svg = d3.select('body')
       .append('svg')
@@ -185,28 +186,31 @@
       svg.selectAll('u')
         .data(partywise[k])
         .enter()
-        .append('rect')
-        .attr('width', squareDim)
-        .attr('height', squareDim)
-        .attr('x', function(d,i){
-        	if (i == 0) {
-        	col += rowMax + 1;
-        }
-          return ((i % rowMax) + col) * (squareDim + 2);
-          // return i * (squareDim + 2); //horizontal
+        .append('path')
+        .attr('d', d3.symbol().type(function(d) {
+          if (d.Won == 'Yes') {
+            return d3.symbolSquare;
+          }
+          else {
+            return d3.symbolCircle;
+          }
         })
-        .attr('y', function(d, i){
-        // 	if (i == 0) {
-        // 	col += 1;
-        // }
-        //   return col * (squareDim + 2);
+        .size(function(d, i) {
+          return symbolSize;
+        }))
+        .attr("transform", function(d, i) {
+          if (i == 0) {
+          col += rowMax + 1;
+        }
+          var x = ((i % rowMax) + col) * (symbolSize / 11);
           if (i % rowMax == 0 && i != 0) {
           row += 1;
         }
           if (i == 0) {
             row = 0;
           }
-        return row * (squareDim + 2);
+          var y = (row + 1) * (symbolSize/10);
+        return "translate(" + x + "," + y + ")"
         })
         .attr("currentParty", function(d, i) {
             if (typeof(d) === 'undefined') {
@@ -243,12 +247,11 @@
                 return partyColours[d.Last_party];
             }
           })
-        .style("opacity", function(d, i) {
-        	if (d.Won === 'No') {
-        		return 0.5;
-        	}
-
-        })
+        // .style("opacity", function(d, i) {
+        // 	if (d.Won === 'No') {
+        // 		return 0.5;
+        // 	}
+        //  })
         .on("mouseover", function(d, i) {   
                                 div.transition()    
                                     .duration(200)    
@@ -264,7 +267,39 @@
                                     .style("opacity", 0); 
                             });
         }
-      
+
+     col = -rowMax
+     row = -1
+     trashArray = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
+     for (j = 0; j < partywise.length; j++) {
+      svg.selectAll(trashArray[j])
+        .data(partywise[j])
+        .enter()
+        .append('text')
+        .attr("x", function(d, i) {
+          if (i == 0) {
+          col += rowMax + 1;
+        }
+          return ((i % rowMax) + col) * (symbolSize / 11) - 3;
+        })
+        .attr("y", function(d, i) {
+          if (i % rowMax == 0 && i != 0) {
+          row += 1;
+        }
+          if (i == 0) {
+            row = 0;
+          }
+          return (row + 1) * (symbolSize/10) + 4;
+        })
+        .text(function(d) {
+          if (d.Contested > 1) {
+            return d.Contested;
+          }
+        })
+        .style("fill", 'white')
+        .style("font-family", 'Source Sans Pro')
+        .style("font-size", '12px')
+      }
     </script>
     
   </body>
