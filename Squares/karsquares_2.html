@@ -182,6 +182,9 @@
               }
             }
 
+            //sort parties in alphabetical order
+            parties.sort();
+
             //get current assembly entries by party
             var partywise = []
             for (i = 0; i < parties.length; i++) {
@@ -198,18 +201,20 @@
 
             }
 
-            //get parties for legend
-            // var legendParties = []
-            // for (i = 0; i < partywise.length; i++) {
-            //   for (j = 0; j < partywise[i].length; j++) {
-            //     if (!(legendParties.includes(partywise[i][j].Party))) {
-            //     legendParties.push(partywise[i][j].Party);
-            //   }
-            //   if (!(legendParties.includes(partywise[i][j].Last_party))) {
-            //     legendParties.push(partywise[i][j].Last_party);
-            //   }
-            //   }
-            // }
+            //sort other by last party and move 'none' to end
+            partywise[parties.indexOf('Other')].sort(function(a,b) {return (a.Last_party > b.Last_party) ? 1 : ((b.Last_party > a.Last_party) ? -1 : 0);} ); 
+             partywise[parties.indexOf('Other')].forEach(function(v, i) {
+              if (v.Last_party == 'None') {
+                partywise[parties.indexOf('Other')].push(partywise[parties.indexOf('Other')][i]);
+                partywise[parties.indexOf('Other')].splice(i, 1);
+              }
+            })
+             partywise[parties.indexOf('Other')].forEach(function(v, i) {
+                if (v.Position === 1) {
+                    var a = partywise[parties.indexOf('Other')].splice(i,1);   // removes the item
+                    partywise[parties.indexOf('Other')].unshift(a[0]);         // adds it back to the beginning
+                }
+            })
 
             var legendParties = []
             for (i = 0; i < partywise.length; i++) {
@@ -226,15 +231,6 @@
             var colourScale = d3.scaleOrdinal()
               .domain(legendParties)
               .range(legendColours);
-
-    // var squareNum = 408;
-
-    // if (squareNum > rowMax) {
-    //       var rows = Math.floor(squareNum/rowMax);
-    //       var data = Array(rows).fill(rowMax);
-    //       var rem = squareNum % rowMax;
-    //       data.push(rem);
-    //     }
          
     var xMax = 0;
     for (k = 0; k < partywise.length; k++) {
@@ -243,45 +239,22 @@
     	}
     }
 
-
     var symbolSize = 180
     var rowMax = 5
     var squareDim = 12, // pixel dimensions of square
         // width = xMax * 17; // horizontal
         // height = partywise.length * (squareDim + 2); // horizontal
     width = (rowMax + 1) * partywise.length * (Math.sqrt(symbolSize) + 3); // horizontal
-    var height = 1000; //vertical
+    var height = xMax * (Math.sqrt(symbolSize)/3.5); //vertical
     var legendMargin = 300
     var topMargin = 30
-
-    // var xscale = d3.scaleLinear()
-    //                .domain([0, partywise.length])
-    //                .range([0, width]);
-
-    // var x_axis = d3.axisBottom()
-    //                .scale(xscale)
-    //                .ticks((partywise.length-1))
-    //                .tickFormat(function(d, i){
-    //                     return parties[i];
-    //                 });
-
         
     var svg = d3.select('body')
       .append('svg')
       .attr('width', width+legendMargin)
       .attr('height', height);
 
-    // var xAppend = svg.append("g")
-    //                         .attr("class", "xaxis")
-    //                         .attr("transform", "translate(0," + (20) + ")")
-    //                         .call(x_axis)
-
-    // var labelMove = svg.selectAll(".xaxis text")
-    //             .attr("transform", function(d) {
-    //               //  return "translate(" + this.getBBox().width*8 + "," + (this.getBBox().height + 5) + ")rotate(-45)";
-    //               return "translate(" + (width/partywise.length)/2 + ",-20)rotate(0)"
-    //                 });
-
+    //generate shapes
      col = -rowMax
      row = -1
      for (k=0; k<partywise.length; k++) {
@@ -347,6 +320,9 @@
         .attr("acName", function(d, i){
           return d.Constituency_Name;
         })
+        .attr("position", function(d, i){
+          return d.Position;
+        })
         .style("fill", function(d, i) {
             if (typeof(d) === 'undefined') {
                 return 0;
@@ -358,11 +334,6 @@
                 return partyColours[d.Last_party];
             }
           })
-        // .style("opacity", function(d, i) {
-        // 	if (d.Won === 'No') {
-        // 		return 0.5;
-        // 	}
-        //  })
         .on("mouseover", function(d, i) {
                                 d3.select(this)
                                   .transition()
@@ -371,8 +342,7 @@
                                 div.transition()    
                                     .duration(200)    
                                     .style("opacity", .9); 
-                                    div .html(d3.select(this).attr("name") + "<br/>Previously: " + d3.select(this).attr("lastParty") + "<br/>Now: " + d3.select(this).attr("currentParty"))
-                                //div .html(Math.round(this.getBBox().height/hFactor) + "<br/>")
+                                    div .html(d3.select(this).attr("name") + "<br/>Constituency: " + d3.select(this).attr("acName") + "<br/>Previously: " + d3.select(this).attr("lastParty") + "<br/>Position: " + d3.select(this).attr("position"))
                                     .style("left", (d3.event.pageX) + "px")   
                                     .style("top", (d3.event.pageY - 28) + "px");  
                                 })          
@@ -387,6 +357,8 @@
                             });
         }
 
+
+        //generate text
           if (nums > 0) {
            col = -rowMax
            row = -1
@@ -469,6 +441,12 @@
                   else {
                       return (d.Candidate);}
                   })
+              .attr("acName", function(d, i){
+                return d.Constituency_Name;
+              })
+              .attr("position", function(d, i){
+                return d.Position;
+              })
               .style("fill", 'white')
               .style("font-family", 'Montserrat')
               .style('text-shadow', '1px 1px #808080')
@@ -494,7 +472,7 @@
                                       div.transition()    
                                           .duration(200)    
                                           .style("opacity", .9); 
-                                          div .html(d3.select(this).attr("name") + "<br/>Previously: " + d3.select(this).attr("lastParty") + "<br/>Now: " + d3.select(this).attr("currentParty"))
+                                          div .html(d3.select(this).attr("name") + "<br/>Constituency: " + d3.select(this).attr("acName") + "<br/>Previously: " + d3.select(this).attr("lastParty") + "<br/>Position: " + d3.select(this).attr("position"))
                                       //div .html(Math.round(this.getBBox().height/hFactor) + "<br/>")
                                           .style("left", (d3.event.pageX) + "px")   
                                           .style("top", (d3.event.pageY - 28) + "px");  
@@ -542,8 +520,7 @@
 
 
       svg.select(".legendSymbol")
-        .call(legendPath);
-          
+        .call(legendPath);   
         }
 
         generateGraph(mydata, 9, 0);
