@@ -281,7 +281,7 @@
             var labelMove = svg.selectAll(".xaxis text")
                 .attr("transform", function(d) {
                     return "translate(" + this.getBBox().width*labelFactor + "," + (this.getBBox().height + 5) + ")rotate(-45)";
-         });
+                    });
 
             //create graph
             for (k=0; k<partywise.length; k++) {
