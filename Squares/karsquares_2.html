@@ -319,7 +319,7 @@
                 return 0;
             }
             else if (d.Party === 'Other') {
-              return (partyNames[d.Oth_Current]);
+              return d.Oth_Current;
             }
           else {
               return (partyNames[d.Party]);}
@@ -444,7 +444,7 @@
                       return 0;
                   }
                   else if (d.Party === 'Other') {
-                    return (partyNames[d.Oth_Current]);
+                    return d.Oth_Current;
                   }
                 else {
                     return (partyNames[d.Party]);}
@@ -573,7 +573,7 @@
             var nums = eval(d3.select('#numbers').property('value'));
             var assemblyNo = eval(d3.select('#assemblies').property('value'));
             var wonlost = eval(d3.select(this).property('value'));
-            d3.selectAll("svg").transition().duration(0).style("opacity", 0).remove();
+            d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
             generateGraph(mydata, assemblyNo, nums, wonlost);
         });
           
