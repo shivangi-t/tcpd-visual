@@ -58,15 +58,21 @@
       <option value=7>7th Assembly</option> 
       <option value=8>8th Assembly</option>
       <option value=9 selected="selected">9th Assembly</option> 
-
   </select>   
 
   <select id = "numbers">
       <option value=0 selected='selected'>None</option> 
       <option value=1>Times Won</option>
       <option value=2>Times Contested</option> 
+  </select>
 
-  </select>   
+  <select id = "wonlost"> 
+      <option value=0 selected='selected'>All</option> 
+      <option value=1>Won</option>
+      <option value=2>Lost</option>
+  </select>
+
+  <br>
     
     <script>
 
@@ -140,7 +146,7 @@
 
             var partyNames = {'INC': 'Indian National Congress', 'KJP': 'Karnataka Janata Paksha', 'IND': 'Independent', 'CPI': 'Communist Party of India', 'JD(S)': 'Janata Dal (Secular)', 'BLD': 'Bharatiya Lok Dal', 'SP': 'Samajwadi Party', 'RMP': 'Revolutionary Marxist Party', 'INC(I)': 'Indian National Congress (I)', 'JNP(JP)': 'Janata Party', 'BJP': 'Bharatiya Janata Party', 'JNP(SC)': 'Janata Party (SC)', 'JNP': 'Janata Party', 'JD': 'Janata Dal', 'AIRJP': 'All India Rashtriya Janata Party', 'JD(U)': 'Janata Dal United', 'NCP': 'National Communist Party', 'None': 'None', 'Other': 'Other', 'BSRCP': 'Badagara Shramika Raitala Congress', 'JP': 'Janata Party'}
 
-            var generateGraph = function(mydata, assemblyNo, nums) {
+            var generateGraph = function(mydata, assemblyNo, nums, wonlost) {
 
             var div = d3.select("body").append("div")   
                                     .attr("class", "tooltip")               
@@ -150,6 +156,18 @@
             var currentAssembly = mydata.filter(function(i) {
               return i.Assembly_No === assemblyNo;
             });
+
+            if (wonlost == 1) {
+              var currentAssembly = currentAssembly.filter(function(i) {
+                return i.Position === 1;
+              });
+            }
+
+            if (wonlost == 2) {
+              var currentAssembly = currentAssembly.filter(function(i) {
+                return i.Position > 1;
+              });
+            }
 
             var lookup = {};
             var items = currentAssembly;
@@ -535,17 +553,28 @@
           .on('change', function() {
             var assemblyNo = eval(d3.select(this).property('value'));
             var nums = eval(d3.select('#numbers').property('value'));
+            var wonlost = eval(d3.select('#wonlost').property('value'));
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums);
+            generateGraph(mydata, assemblyNo, nums, wonlost);
         });
 
         d3.select('#numbers')
           .on('change', function() {
             var nums = eval(d3.select(this).property('value'));
             var assemblyNo = eval(d3.select('#assemblies').property('value'));
+            var wonlost = eval(d3.select('#wonlost').property('value'));
             d3.selectAll("svg > text").transition().duration(400).style("opacity", 0).remove();
             d3.selectAll("svg").transition().duration(0).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums);
+            generateGraph(mydata, assemblyNo, nums, wonlost);
+        });
+
+        d3.select('#wonlost')
+          .on('change', function() {
+            var nums = eval(d3.select('#numbers').property('value'));
+            var assemblyNo = eval(d3.select('#assemblies').property('value'));
+            var wonlost = eval(d3.select(this).property('value'));
+            d3.selectAll("svg").transition().duration(0).style("opacity", 0).remove();
+            generateGraph(mydata, assemblyNo, nums, wonlost);
         });
           
 
