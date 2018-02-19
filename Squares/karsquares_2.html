@@ -156,13 +156,6 @@
               return i.Assembly_No === assemblyNo;
             });
 
-            if (searchTerm != '') {
-              var pattern = new RegExp(searchTerm, 'i')
-              var currentAssembly = currentAssembly.filter(function(i) {
-                return pattern.test(i.Candidate);
-              });
-            }
-
             if (wonlost == 1) {
               var currentAssembly = currentAssembly.filter(function(i) {
                 return i.Position === 1;
@@ -224,6 +217,7 @@
                 }
             })
 
+            //create legendParties array
             var legendParties = []
             for (i = 0; i < partywise.length; i++) {
               legendParties.push(partywise[i][0].Party)
@@ -365,6 +359,114 @@
                                     .style("opacity", 0); 
                             });
         }
+
+        //generate search shapes
+        var pattern = new RegExp(searchTerm, 'i')
+        col = -rowMax
+       row = -1
+       for (k=0; k<partywise.length; k++) {
+        svg.selectAll('u')
+          .data(partywise[k])
+          .enter()
+          .append('path')
+          .attr('d', d3.symbol().type(function(d) {
+            if (d.Won == 'Yes') {
+              return d3.symbolSquare;
+            }
+            else {
+              return d3.symbolCircle;
+            }
+          })
+          .size(function(d, i) {
+            return symbolSize*0.75;
+          }))
+          .attr("transform", function(d, i) {
+            if (i == 0) {
+            col += rowMax + 1;
+          }
+            var x = ((i % rowMax) + col) * (symbolSize / 11);
+            if (i % rowMax == 0 && i != 0) {
+            row += 1;
+          }
+            if (i == 0) {
+              row = 0;
+            }
+            var y = (row + 3) * (symbolSize/10);
+          return "translate(" + x + "," + y + ")"
+          })
+          .attr("currentParty", function(d, i) {
+              if (typeof(d) === 'undefined') {
+                  return 0;
+              }
+              else if (d.Party === 'Other') {
+                return d.Oth_Current;
+              }
+            else {
+                return (partyNames[d.Party]);}
+            })
+          .attr("lastParty", function(d, i) {
+              if (typeof(d) === 'undefined') {
+                  return 0;
+              }
+              if (typeof(d.Last_party) === 'undefined') {
+                return ('None');
+              }
+              else if (d.Last_party === 'Other') {
+                return d.Oth_Last;
+              }
+              else {
+                  return partyNames[d.Last_party];}
+              })
+          .attr("name", function(d, i) {
+              if (typeof(d) === 'undefined') {
+                  return 0;
+              }
+              else {
+                  return (d.Candidate);}
+              })
+          .attr("acName", function(d, i){
+            return d.Constituency_Name;
+          })
+          .attr("position", function(d, i){
+            return d.Position;
+          })
+          .style("fill", function(d, i) {
+              if (typeof(d) === 'undefined') {
+                  return 0;
+              }
+              if (typeof(d.Last_party) === 'undefined') {
+                  return partyColours['None'];
+              }
+              if (!pattern.test(d.Candidate) && !pattern.test(d.Constituency_Name)) {
+                return '#ffffff'
+              }
+              else {
+                  return partyColours[d.Last_party];
+              }
+            })
+          .on("mouseover", function(d, i) {
+                                  d3.select(this)
+                                    .transition()
+                                    .duration(200)
+                                    .style('opacity', 0.5)
+                                  div.transition()    
+                                      .duration(200)    
+                                      .style("opacity", .9); 
+                                      div .html(d3.select(this).attr("name") + "<br/>Constituency: " + d3.select(this).attr("acName") + "<br/>Previously: " + d3.select(this).attr("lastParty") + "<br/>Position: " + d3.select(this).attr("position"))
+                                      .style("left", (d3.event.pageX) + "px")   
+                                      .style("top", (d3.event.pageY - 28) + "px");  
+                                  })          
+                              .on("mouseout", function(d) { 
+                                  d3.select(this)
+                                    .transition()
+                                    .duration(200)
+                                    .style('opacity', 1) 
+                                  div.transition()    
+                                      .duration(500)    
+                                      .style("opacity", 0); 
+                              });
+          }
+
 
 
         //generate text
