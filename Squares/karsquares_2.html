@@ -243,14 +243,15 @@
 
     var symbolSize = 180
     var rowMax = 5
+    var topMargin = 30
     var squareDim = 12, // pixel dimensions of square
         // width = xMax * 17; // horizontal
         // height = partywise.length * (squareDim + 2); // horizontal
     width = (rowMax + 1) * partywise.length * (Math.sqrt(symbolSize) + 3); // horizontal
-    //var height = xMax * (Math.sqrt(symbolSize)/3.5);
-    var height = 1000 //vertical
+    var height = topMargin + xMax * (Math.sqrt(symbolSize)/3.5);
+    //var height = 1000 //vertical
     var legendMargin = 300
-    var topMargin = 30
+    
         
     var svg = d3.select('body')
       .append('svg')
@@ -560,7 +561,7 @@
               })
               .style("fill", 'white')
               .style("font-family", 'Montserrat')
-              .style('text-shadow', '1px 1px #808080')
+              //.style('text-shadow', '1px 1px #808080')
               .style("font-size", function(d) {
                 if (nums == 2) {
                   if (d.Contested > 9) {
