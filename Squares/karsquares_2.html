@@ -10,9 +10,7 @@
 <style>
     div.tooltip {   
           position: absolute;           
-          text-align: center;           
-          width: 15%;                  
-          height: 9%;                 
+          text-align: center;                           
           padding: 2px;             
           font: 1vw 'Source Sans Pro';        
           background: white;   
@@ -48,6 +46,7 @@
 
   <body>
 
+    <input type = 'text' id = 'search'>
 
     <select id = "assemblies">
       <!-- <option value=2>2nd Assembly</option>
@@ -385,7 +384,7 @@
                   return ((i % rowMax) + col) * (symbolSize / 11) - 7;
                 }
                 else {
-                  return ((i % rowMax) + col) * (symbolSize / 11) - 4;          
+                  return ((i % rowMax) + col) * (symbolSize / 11) - 3;          
                 }
               }
 
@@ -553,6 +552,12 @@
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
             generateGraph(mydata, assemblyNo, nums, wonlost);
         });
+
+        d3.select('#search')
+          .on('change', function() {
+            var searchTerm = d3.select('#search').property('value');
+            console.log(searchTerm);
+          })
           
 
 
