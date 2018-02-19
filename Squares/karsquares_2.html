@@ -145,7 +145,7 @@
 
             var partyNames = {'INC': 'Indian National Congress', 'KJP': 'Karnataka Janata Paksha', 'IND': 'Independent', 'CPI': 'Communist Party of India', 'JD(S)': 'Janata Dal (Secular)', 'BLD': 'Bharatiya Lok Dal', 'SP': 'Samajwadi Party', 'RMP': 'Revolutionary Marxist Party', 'INC(I)': 'Indian National Congress (I)', 'JNP(JP)': 'Janata Party', 'BJP': 'Bharatiya Janata Party', 'JNP(SC)': 'Janata Party (SC)', 'JNP': 'Janata Party', 'JD': 'Janata Dal', 'AIRJP': 'All India Rashtriya Janata Party', 'JD(U)': 'Janata Dal United', 'NCP': 'National Communist Party', 'None': 'None', 'Other': 'Other', 'BSRCP': 'Badagara Shramika Raitala Congress', 'JP': 'Janata Party'}
 
-            var generateGraph = function(mydata, assemblyNo, nums, wonlost) {
+            var generateGraph = function(mydata, assemblyNo, nums, wonlost, searchTerm) {
 
             var div = d3.select("body").append("div")   
                                     .attr("class", "tooltip")               
@@ -155,6 +155,13 @@
             var currentAssembly = mydata.filter(function(i) {
               return i.Assembly_No === assemblyNo;
             });
+
+            if (searchTerm != '') {
+              var pattern = new RegExp(searchTerm, 'i')
+              var currentAssembly = currentAssembly.filter(function(i) {
+                return pattern.test(i.Candidate);
+              });
+            }
 
             if (wonlost == 1) {
               var currentAssembly = currentAssembly.filter(function(i) {
@@ -167,6 +174,8 @@
                 return i.Position > 1;
               });
             }
+
+            
 
             var lookup = {};
             var items = currentAssembly;
@@ -244,7 +253,8 @@
         // width = xMax * 17; // horizontal
         // height = partywise.length * (squareDim + 2); // horizontal
     width = (rowMax + 1) * partywise.length * (Math.sqrt(symbolSize) + 3); // horizontal
-    var height = xMax * (Math.sqrt(symbolSize)/3.5); //vertical
+    //var height = xMax * (Math.sqrt(symbolSize)/3.5);
+    var height = 1000 //vertical
     var legendMargin = 300
     var topMargin = 30
         
@@ -522,7 +532,7 @@
         .call(legendPath);   
         }
 
-        generateGraph(mydata, 9, 0);
+        generateGraph(mydata, 9, 0, '');
 
         // handle on click event
         d3.select('#assemblies')
@@ -530,8 +540,9 @@
             var assemblyNo = eval(d3.select(this).property('value'));
             var nums = eval(d3.select('#numbers').property('value'));
             var wonlost = eval(d3.select('#wonlost').property('value'));
+            var searchTerm = d3.select('#search').property('value');
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost);
+            generateGraph(mydata, assemblyNo, nums, wonlost, searchTerm);
         });
 
         d3.select('#numbers')
@@ -539,9 +550,10 @@
             var nums = eval(d3.select(this).property('value'));
             var assemblyNo = eval(d3.select('#assemblies').property('value'));
             var wonlost = eval(d3.select('#wonlost').property('value'));
+            var searchTerm = d3.select('#search').property('value');
             d3.selectAll("svg > text").transition().duration(400).style("opacity", 0).remove();
             d3.selectAll("svg").transition().duration(0).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost);
+            generateGraph(mydata, assemblyNo, nums, wonlost, searchTerm);
         });
 
         d3.select('#wonlost')
@@ -549,13 +561,19 @@
             var nums = eval(d3.select('#numbers').property('value'));
             var assemblyNo = eval(d3.select('#assemblies').property('value'));
             var wonlost = eval(d3.select(this).property('value'));
+            var searchTerm = d3.select('#search').property('value');
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost);
+            generateGraph(mydata, assemblyNo, nums, wonlost, searchTerm);
         });
 
         d3.select('#search')
           .on('change', function() {
-            var searchTerm = d3.select('#search').property('value');
+            var searchTerm = d3.select(this).property('value');
+            var nums = eval(d3.select('#numbers').property('value'));
+            var assemblyNo = eval(d3.select('#assemblies').property('value'));
+            var wonlost = eval(d3.select('#wonlost').property('value'));
+            d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
+            generateGraph(mydata, assemblyNo, nums, wonlost, searchTerm);
             console.log(searchTerm);
           })
           
