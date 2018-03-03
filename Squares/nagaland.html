@@ -223,19 +223,21 @@ var jsonData = '[{"Candidate":"WETEZULO","Poll_No":0,"Position":1,"Constituency_
             }
 
             //sort other by last party and move 'none' to end
-            // partywise[parties.indexOf('Other')].sort(function(a,b) {return (a.Last_party > b.Last_party) ? 1 : ((b.Last_party > a.Last_party) ? -1 : 0);} ); 
-            //  partywise[parties.indexOf('Other')].forEach(function(v, i) {
-            //   if (v.Last_party == 'None') {
-            //     partywise[parties.indexOf('Other')].push(partywise[parties.indexOf('Other')][i]);
-            //     partywise[parties.indexOf('Other')].splice(i, 1);
-            //   }
-            // })
-            //  partywise[parties.indexOf('Other')].forEach(function(v, i) {
-            //     if (v.Position === 1) {
-            //         var a = partywise[parties.indexOf('Other')].splice(i,1);   // removes the item
-            //         partywise[parties.indexOf('Other')].unshift(a[0]);         // adds it back to the beginning
-            //     }
-            // })
+            if (parties.indexOf('Other') !== -1) {
+              partywise[parties.indexOf('Other')].sort(function(a,b) {return (a.Last_party > b.Last_party) ? 1 : ((b.Last_party > a.Last_party) ? -1 : 0);} ); 
+             partywise[parties.indexOf('Other')].forEach(function(v, i) {
+              if (v.Last_party == 'None') {
+                partywise[parties.indexOf('Other')].push(partywise[parties.indexOf('Other')][i]);
+                partywise[parties.indexOf('Other')].splice(i, 1);
+              }
+            })
+             partywise[parties.indexOf('Other')].forEach(function(v, i) {
+                if (v.Position === 1) {
+                    var a = partywise[parties.indexOf('Other')].splice(i,1);   // removes the item
+                    partywise[parties.indexOf('Other')].unshift(a[0]);         // adds it back to the beginning
+                }
+              })
+            }
 
             //create legendParties array
             var legendParties = []
