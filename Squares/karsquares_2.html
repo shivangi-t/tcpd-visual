@@ -11,12 +11,14 @@
 <style>
     div.tooltip {   
           position: absolute;           
-          text-align: center;                           
+          text-align: left;                           
           padding: 2px;             
-          font: 1vw 'Source Sans Pro';        
-          background: white;   
-          border: 0px;      
-          border-radius: 0px;           
+          font: 1vw 'Source Sans Pro';
+          color: white;      
+          background: black;   
+          border: 0px; 
+          border-color: black;     
+          border-radius: 2px;           
           pointer-events: none;         
 }
 
@@ -50,8 +52,8 @@
     <input type = 'text' id = 'search'>
 
     <select id = "assemblies">
-      <!-- <option value=2>2nd Assembly</option>
-      <option value=3>3rd Assembly</option>  -->
+      <option value=2>2nd Assembly</option>
+      <option value=3>3rd Assembly</option>
       <option value=4>4th Assembly</option> 
       <option value=5>5th Assembly</option>
       <option value=6>6th Assembly</option> 
@@ -75,7 +77,7 @@
   <select id = "turncoats"> 
       <option value=0 selected='selected'>All</option> 
       <option value=1>Turncoats</option>
-      <option value=2>New Candidates</option>
+      <!--<option value=2>New Candidates</option>-->
   </select>
 
   <br>
@@ -124,7 +126,7 @@
             //generate colour range for parties
             var colourRange = randomColor({
                count: allParties.length,
-               luminosity: 'dark',
+               luminosity: 'bright',
                format: 'rgb' // e.g. 'rgb(225,200,20)' 
             });
 
@@ -182,15 +184,13 @@
               });
             }
 
+            // if (turncoats == 2 ) {
+            //   var currentAssembly = currentAssembly.filter(function(i) {
+            //     return i.Contested === 1;
+            //   });
+            // }
 
-
-            // currentAssembly.forEach(function(k) {
-            //     var candHistory = mydata.filter(function(i) {
-            //       return (i.pid == k.pid);
-            //     });
-            //     candHistory.sort(function(a,b) {return b.Assembly_No - a.Assembly_No});
-            //     k.candHistory = candHistory;
-            // })
+            currentAssembly = currentAssembly.filter(function(e){return e});
 
             var lookup = {};
             var items = currentAssembly;
@@ -225,19 +225,19 @@
             }
 
             //sort other by last party and move 'none' to end
-            partywise[parties.indexOf('Other')].sort(function(a,b) {return (a.Last_party > b.Last_party) ? 1 : ((b.Last_party > a.Last_party) ? -1 : 0);} ); 
-             partywise[parties.indexOf('Other')].forEach(function(v, i) {
-              if (v.Last_party == 'None') {
-                partywise[parties.indexOf('Other')].push(partywise[parties.indexOf('Other')][i]);
-                partywise[parties.indexOf('Other')].splice(i, 1);
-              }
-            })
-             partywise[parties.indexOf('Other')].forEach(function(v, i) {
-                if (v.Position === 1) {
-                    var a = partywise[parties.indexOf('Other')].splice(i,1);   // removes the item
-                    partywise[parties.indexOf('Other')].unshift(a[0]);         // adds it back to the beginning
-                }
-            })
+            // partywise[parties.indexOf('Other')].sort(function(a,b) {return (a.Last_party > b.Last_party) ? 1 : ((b.Last_party > a.Last_party) ? -1 : 0);} ); 
+            //  partywise[parties.indexOf('Other')].forEach(function(v, i) {
+            //   if (v.Last_party == 'None') {
+            //     partywise[parties.indexOf('Other')].push(partywise[parties.indexOf('Other')][i]);
+            //     partywise[parties.indexOf('Other')].splice(i, 1);
+            //   }
+            // })
+            //  partywise[parties.indexOf('Other')].forEach(function(v, i) {
+            //     if (v.Position === 1) {
+            //         var a = partywise[parties.indexOf('Other')].splice(i,1);   // removes the item
+            //         partywise[parties.indexOf('Other')].unshift(a[0]);         // adds it back to the beginning
+            //     }
+            // })
 
             //create legendParties array
             var legendParties = []
@@ -263,6 +263,8 @@
     	}
     }
 
+    console.log(xMax);
+
     var symbolSize = 180
     var rowMax = 5
     var topMargin = 30
@@ -270,7 +272,7 @@
         // width = xMax * 17; // horizontal
         // height = partywise.length * (squareDim + 2); // horizontal
     width = (rowMax + 1) * partywise.length * (Math.sqrt(symbolSize) + 3); // horizontal
-    var height = topMargin + xMax * (Math.sqrt(symbolSize)/3.5);
+    var height = (topMargin + xMax/rowMax) * (Math.sqrt(symbolSize));
     //var height = 1000 //vertical
     var legendMargin = 300
     
@@ -722,7 +724,7 @@
         });
 
         d3.select('#search')
-          .on('change', function() {
+          .on('keyup', function() {
             var searchTerm = d3.select(this).property('value');
             var nums = eval(d3.select('#numbers').property('value'));
             var assemblyNo = eval(d3.select('#assemblies').property('value'));
