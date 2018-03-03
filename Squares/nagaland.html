@@ -79,9 +79,9 @@
   </select>
 
   <select id = "turncoats"> 
-      <option value=0 selected='selected'>All</option> 
+      <option value=2>All</option> 
       <option value=1>Turncoats</option>
-      <!-- <option value=2>New Candidates</option> -->
+      <option value=0 selected='selected'>Previously Contested</option>
   </select>
 
   <br>
@@ -186,6 +186,12 @@ var jsonData = '[{"Candidate":"WETEZULO","Poll_No":0,"Position":1,"Constituency_
             if (turncoats == 1 ) {
               var currentAssembly = currentAssembly.filter(function(i) {
                 return i.Turncoat === 'Yes';
+              });
+            }
+
+            if (turncoats == 0) {
+              var currentAssembly = currentAssembly.filter(function(i) {
+                return i.Contested > 1;
               });
             }
 
@@ -673,7 +679,7 @@ var jsonData = '[{"Candidate":"WETEZULO","Poll_No":0,"Position":1,"Constituency_
   
     }
 
-        generateGraph(mydata, 13, 0, 0, '');
+        generateGraph(mydata, 13, 0, 0, 0, '');
 
         // handle on click event
         d3.select('#assemblies')
