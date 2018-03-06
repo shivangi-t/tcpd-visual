@@ -87,42 +87,15 @@
   <br>
     
     <script>
-
-
     var state = 'Nagaland'
 
     var url = 'http://shivangitikekar.com/portfolio/json/' + state + '_incumbency.json';
-    
-    var mydata;
-    d3.json(url, function(data) {
-      mydata = data;
 
-    var topParties = ['INC', 'IND', 'BJP', 'None', 'NPF', 'NPC']
+      var mydata;
+      d3.json(url, function(data) {
+          mydata = data;
 
-            for (i = 0; i < mydata.length; i++) {
-            	if (typeof(mydata[i].Last_party) === 'undefined') {
-            		mydata[i].Last_party = 'None';
-            	}
-              mydata[i].Oth_Current = mydata[i].Party;
-              mydata[i].Oth_Last = mydata[i].Last_party;
-              if (!(topParties.includes(mydata[i].Party)) && !(topParties.includes(mydata[i].Last_party))) {
-                mydata[i].Oth_Current = mydata[i].Party;
-                mydata[i].Party = 'Other';
-                mydata[i].Oth_Last = mydata[i].Last_party;
-                mydata[i].Last_party = 'Other';
-              }
-              else if (!(topParties.includes(mydata[i].Party))) {
-                mydata[i].Oth_Current = mydata[i].Party;
-                mydata[i].Party = 'Other';
-              }
-              else if (!(topParties.includes(mydata[i].Last_party))) {
-                mydata[i].Oth_Last = mydata[i].Last_party;
-                mydata[i].Last_party = 'Other';
-              }
-            }
-
-
-            //get list of all parties
+    //get list of all parties
             var allParties = []
             for (i = 0; i < mydata.length; i++) {
               if (!(allParties.includes(mydata[i].Party))) {
@@ -155,24 +128,25 @@
             partyColours['SP'] = '#990000'
             partyColours['JD(U)'] = '#ff005c'
             partyColours['BSP'] = '#99003d'
-            partyColours['BJNKP'] = '#333300'
-            partyColours['GPP'] = '#ffcc00'
+            partyColours['NCP'] = '#ff0000'
+            partyColours['HSPDP'] = '#ffcc00'
             partyColours['None'] = '#707070'
             partyColours['JP'] = '#536896'
             partyColours['JNP'] = '#536896'
             partyColours['JNP(JP)'] = '#536896'
-            partyColours['Other'] = '#000000'
 
 
-            var partyNames = {'INC': 'Indian National Congress', 'KJP': 'Karnataka Janata Paksha', 'IND': 'Independent', 'CPI': 'Communist Party of India', 'JD(S)': 'Janata Dal (Secular)', 'NPF': 'Naga People\'s Front', 'SP': 'Samajwadi Party', 'RMP': 'Revolutionary Marxist Party', 'INC(I)': 'Indian National Congress (I)', 'JNP(JP)': 'Janata Party', 'BJP': 'Bharatiya Janata Party', 'JNP(SC)': 'Janata Party (SC)', 'JNP': 'Janata Party', 'JD': 'Janata Dal', 'AIRJP': 'All India Rashtriya Janata Party', 'JD(U)': 'Janata Dal United', 'NCP': 'National Communist Party', 'None': 'None', 'Other': 'Other', 'BSRCP': 'Badagara Shramika Raitala Congress', 'JP': 'Janata Party', 'NPC': 'Nagaland Peace Council'}
+            var partyNames = {'INC': 'Indian National Congress', 'KJP': 'Karnataka Janata Paksha', 'IND': 'Independent', 'CPI': 'Communist Party of India', 'JD(S)': 'Janata Dal (Secular)', 'NPF': 'Naga People\'s Front', 'SP': 'Samajwadi Party', 'RMP': 'Revolutionary Marxist Party', 'INC(I)': 'Indian National Congress (I)', 'JNP(JP)': 'Janata Party', 'BJP': 'Bharatiya Janata Party', 'JNP(SC)': 'Janata Party (SC)', 'JNP': 'Janata Party', 'JD': 'Janata Dal', 'AIRJP': 'All India Rashtriya Janata Party', 'JD(U)': 'Janata Dal United', 'NCP': 'National Communist Party', 'None': 'None', 'Other': 'Other', 'BSRCP': 'Badagara Shramika Raitala Congress', 'JP': 'Janata Party', 'CPM': 'Communist Party of India (Marxist)', 'UDP': 'United Democratic Party', 'HSPDP': 'Hill State People\'s Democratic Party', 'NPP': 'National People\'s Party'}
 
             var generateGraph = function(mydata, assemblyNo, nums, wonlost, turncoats, searchTerm) {
 
-            var div = d3.select("body").append("div")   
+var div = d3.select("body").append("div")   
                                     .attr("class", "tooltip")               
-                                    .style("opacity", 0); 
+                                    .style("opacity", 0);
 
-            //get current assembly parties
+var topParties = ['INC', 'IND', 'BJP', 'None', 'Other']
+
+            //get current assembly entries
             var currentAssembly = mydata.filter(function(i) {
               return i.Assembly_No === assemblyNo;
             });
@@ -201,13 +175,84 @@
               });
             }
 
+            //currentAssembly = currentAssembly.filter(function(e){return e});
+
+            //get current assembly parties
             var lookup = {};
             var items = currentAssembly;
             var parties = [];
 
             for (var item, i = 0; item = items[i++];) {
               var Party = item.Party;
-              console.log(Party);
+
+              if (!(Party in lookup)) {
+                lookup[Party] = 1;
+                parties.push(Party);
+              }
+            }
+
+            //get current assembly entries by party
+            var partywise = []
+            for (i = 0; i < parties.length; i++) {
+              var currentParty = parties[i];
+              var currentEntries = currentAssembly.filter(function(i) {
+                if (currentParty == 'IND') {
+                  return (i.Party === currentParty && i.Last_party != 'None');
+                }
+                else {
+                  return (i.Party === currentParty);
+                }
+            });
+              partywise.push(currentEntries);
+            }
+
+            //get important parties
+            var xMax = 0;
+            var numCand = 0;
+            for (k = 0; k < partywise.length; k++) {
+              numCand += partywise[k].length;
+              if (partywise[k].length > xMax) {
+                xMax = partywise[k].length;
+              }
+            }
+
+            var inclusionFactor = numCand*0.05;
+            for (k = 0; k < partywise.length; k++) {
+              if (partywise[k].length > inclusionFactor && topParties.indexOf(partywise[k][0].Party) < 0) {
+                topParties.push(partywise[k][0].Party);
+              }
+            }
+
+            //'other' irrelevant parties
+            for (i = 0; i < mydata.length; i++) {
+             if (typeof(mydata[i].Last_party) === 'undefined') {
+               mydata[i].Last_party = 'None';
+             }
+              mydata[i].Oth_Current = mydata[i].Party;
+              mydata[i].Oth_Last = mydata[i].Last_party;
+              if (!(topParties.includes(mydata[i].Party)) && !(topParties.includes(mydata[i].Last_party))) {
+                mydata[i].Oth_Current = mydata[i].Party;
+                mydata[i].Party = 'Other';
+                mydata[i].Oth_Last = mydata[i].Last_party;
+                mydata[i].Last_party = 'Other';
+              }
+              else if (!(topParties.includes(mydata[i].Party))) {
+                mydata[i].Oth_Current = mydata[i].Party;
+                mydata[i].Party = 'Other';
+              }
+              else if (!(topParties.includes(mydata[i].Last_party))) {
+                mydata[i].Oth_Last = mydata[i].Last_party;
+                mydata[i].Last_party = 'Other';
+              }
+            }
+
+            //get current assembly parties
+            var lookup = {};
+            var items = currentAssembly;
+            var parties = [];
+
+            for (var item, i = 0; item = items[i++];) {
+              var Party = item.Party;
 
               if (!(Party in lookup)) {
                 lookup[Party] = 1;
@@ -231,11 +276,10 @@
                 }
             });
               partywise.push(currentEntries);
-              console.log(partywise);
             }
 
             //sort other by last party and move 'none' to end
-            if (parties.indexOf('Other') !== -1) {
+            if (parties.indexOf('Other') > -1) {
               partywise[parties.indexOf('Other')].sort(function(a,b) {return (a.Last_party > b.Last_party) ? 1 : ((b.Last_party > a.Last_party) ? -1 : 0);} ); 
              partywise[parties.indexOf('Other')].forEach(function(v, i) {
               if (v.Last_party == 'None') {
@@ -248,9 +292,9 @@
                     var a = partywise[parties.indexOf('Other')].splice(i,1);   // removes the item
                     partywise[parties.indexOf('Other')].unshift(a[0]);         // adds it back to the beginning
                 }
-              })
+            })
             }
-
+            
             //create legendParties array
             var legendParties = []
             for (i = 0; i < partywise.length; i++) {
@@ -270,9 +314,9 @@
          
     var xMax = 0;
     for (k = 0; k < partywise.length; k++) {
-    	if (partywise[k].length > xMax) {
-    		xMax = partywise[k].length;
-    	}
+      if (partywise[k].length > xMax) {
+        xMax = partywise[k].length;
+      }
     }
 
     var symbolSize = 180
@@ -292,6 +336,15 @@
       .attr('width', width+legendMargin)
       .attr('height', height);
 
+      //create symbol legend
+      circle = d3.symbol().type(d3.symbolCircle).size(200)();
+      square = d3.symbol().type(d3.symbolSquare).size(200)();
+
+      var symbolScale =  d3.scaleOrdinal()
+        .domain(['Winner','Loser'])
+        .range([square, circle] );
+
+      var graph = d3.select("svg");
 
     //generate shapes
      col = -rowMax
@@ -661,25 +714,18 @@
             svg.select(".legendOrdinal")
                 .call(legendOrdinal);
 
-             //create symbol legend
-      circle = d3.symbol().type(d3.symbolCircle).size(200)();
-      square = d3.symbol().type(d3.symbolSquare).size(200)();
+            svg.append("g")
+              .attr("class", "legendSymbol")
+              .attr("transform", "translate("+ (width + 20) +", 100)");
 
-      var symbolScale =  d3.scaleOrdinal()
-        .domain(['Winner in previous election','Loser in previous election'])
-        .range([square, circle] );
-
-      svg.append("g")
-        .attr("class", "legendSymbol")
-        .attr("transform", "translate("+ (width + 20) +", 100)");
-
-      var legendPath = d3.legendSymbol()
-        .scale(symbolScale)
-        .orient("vertical")
+            var legendPath = d3.legendSymbol()
+              .scale(symbolScale)
+              .orient("vertical")
 
 
-      svg.select(".legendSymbol")
-        .call(legendPath); 
+            svg.select(".legendSymbol")
+              .call(legendPath); 
+
 
   
     }
@@ -695,7 +741,7 @@
             var turncoats = eval(d3.select('#turncoats').property('value'));
             var searchTerm = d3.select('#search').property('value');
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost,turncoats,searchTerm);
+            generateGraph(mydata, assemblyNo, nums, wonlost,searchTerm);
         });
 
         d3.select('#numbers')
@@ -707,7 +753,7 @@
             var searchTerm = d3.select('#search').property('value');
             d3.selectAll("svg > text").transition().duration(400).style("opacity", 0).remove();
             d3.selectAll("svg").transition().duration(0).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost,turncoats,searchTerm);
+            generateGraph(mydata, assemblyNo, nums, wonlost,searchTerm);
         });
 
         d3.select('#wonlost')
@@ -718,7 +764,7 @@
             var wonlost = eval(d3.select(this).property('value'));
             var searchTerm = d3.select('#search').property('value');
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost,turncoats,searchTerm);
+            generateGraph(mydata, assemblyNo, nums, wonlost,searchTerm);
         });
 
         d3.select('#turncoats')
@@ -740,11 +786,11 @@
             var turncoats = eval(d3.select('#turncoats').property('value'));
             var wonlost = eval(d3.select('#wonlost').property('value'));
             d3.selectAll("svg").transition().duration(400).style("opacity", 0).remove();
-            generateGraph(mydata, assemblyNo, nums, wonlost,turncoats,searchTerm);
+            generateGraph(mydata, assemblyNo, nums, wonlost,searchTerm);
             console.log(searchTerm);
           })
           
-    });
+        });
 
     </script>
     
