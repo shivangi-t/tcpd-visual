@@ -2,7 +2,7 @@
 <html>
 
   <head>
-  	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Montserrat" rel="stylesheet">
     <link rel="stylesheet" href="/Users/shivangi/Downloads/chosen_v1.8.3/chosen.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js"></script>
     <script data-require="d3@4.0.0" data-semver="4.0.0" src="https://d3js.org/d3.v4.min.js"></script>
@@ -12,7 +12,7 @@
     div.tooltip {   
           position: absolute;           
           text-align: left;                           
-          padding: 2px;             
+          padding: 8px;             
           font: 1vw 'Source Sans Pro';
           color: white;      
           background: black;   
@@ -44,6 +44,23 @@
           font-size: 15px;
         }
 
+        label, select {
+            display: inline-block;
+            width: 100px;
+        }
+
+        label {
+            position: relative;
+            top: -1.2em;
+            left: 5px;
+            font-family: 'Source Sans Pro';
+            text-align: center;
+        }
+
+        select {
+            margin: 1.5em 0 0 -100px;
+        }
+
 </style>
   </head>
 
@@ -51,6 +68,7 @@
 
     <input type = 'text' id = 'search'>
 
+    <label for="assemblies">Assembly</label>
     <select id = "assemblies">
       <option value=2>2nd Assembly</option>
       <option value=3>3rd Assembly</option> 
@@ -64,18 +82,21 @@
       <option value=11 selected="selected">11th Assembly</option> 
   </select>   
 
+  <label for="numbers">Label</label>
   <select id = "numbers">
       <option value=0 selected='selected'>None</option> 
       <option value=1>Times Won</option>
       <option value=2>Times Contested</option> 
   </select>
 
+  <label for="wonlost">Position</label>
   <select id = "wonlost"> 
       <option value=0 selected='selected'>All</option> 
       <option value=1>Won</option>
       <option value=2>Lost</option>
   </select>
 
+  <label for="turncoats">Turncoats</label>
   <select id = "turncoats"> 
       <option value=2>All</option> 
       <option value=1>Turncoats</option>
@@ -88,7 +109,7 @@
 
     var state = 'Tripura'
 
-    var url = 'http://shivangitikekar.com/portfolio/json/' + state + '_incumbency.json';
+    var url = 'http://shivangitikekar.com/portfolio/json/' + state + '_incumbency.json'; //change json source here
     
     var mydata;
     d3.json(url, function(data) {
@@ -306,7 +327,7 @@
           }
         })
         .size(function(d, i) {
-          return symbolSize;
+          return symbolSize*0.4;
         }))
         .attr("transform", function(d, i) {
           if (i == 0) {
@@ -369,6 +390,7 @@
                 return partyColours[d.Last_party];
             }
           })
+        //.style('opacity', 0.5)
         .on("mouseover", function(d, i) {
                                 d3.select(this)
                                   .transition()
@@ -421,7 +443,7 @@
             }
           })
           .size(function(d, i) {
-            return symbolSize*0.6;
+            return symbolSize;
           }))
           .attr("transform", function(d, i) {
             if (i == 0) {
@@ -662,7 +684,7 @@
       square = d3.symbol().type(d3.symbolSquare).size(200)();
 
       var symbolScale =  d3.scaleOrdinal()
-        .domain(['Winner in previous election','Loser in previous election'])
+        .domain(['Winner','Loser'])
         .range([square, circle] );
 
       svg.append("g")
